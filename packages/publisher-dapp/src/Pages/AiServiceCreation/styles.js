@@ -3,7 +3,10 @@ export const useStyles = MUITheme => ({
     paddingTop: 40,
     "& h3": { lineHeight: "48px" },
     "& > div": {
-      "&:nth-child(2)": { width: 700 },
+      "&:nth-child(2)": {
+        width: 700,
+        [MUITheme.breakpoints.down("sm")]: { width: "90%" },
+      },
     },
     "& ul": {
       "& li": {
