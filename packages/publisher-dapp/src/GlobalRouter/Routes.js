@@ -149,6 +149,11 @@ export const setupRouteAuthentications = () => {
   };
   return {
     ...GlobalRoutes,
+    ONBOARDING: {
+      ...GlobalRoutes.ONBOARDING,
+      isAllowed: isLoggedIn && isMMConnected,
+      redirectTo: loggedInMMconnectionRedirection(),
+    },
     ORGANIZATION_SETUP: {
       ...GlobalRoutes.ORGANIZATION_SETUP,
       isAllowed: isLoggedIn && isMMConnected,
