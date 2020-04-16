@@ -112,6 +112,10 @@ export const LoaderContent = {
     title: "Uploading...",
     content: "Just a moment. We are uploading the file",
   },
+  DELETE_FILE: {
+    title: "Deleting...",
+    content: "Just a moment. We are shredding the file",
+  },
   USER_VERIFICATION_INITIATE: {
     title: "Initiating Verification",
     content: "Please wait while we redirect you to the KYC portal",

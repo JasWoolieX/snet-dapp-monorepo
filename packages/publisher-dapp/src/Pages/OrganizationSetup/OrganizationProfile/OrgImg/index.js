@@ -31,8 +31,13 @@ const OrgImg = ({ classes }) => {
     dispatch(organizationActions.setOrgHeroImageUrl(url));
   };
 
-  const handleResetImage = () => {
-    dispatch(organizationActions.setOrgHeroImageUrl(""));
+  const handleResetImage = async () => {
+    try {
+      await dispatch(organizationActions.deleteOrgImage(orgUuid));
+      dispatch(organizationActions.setOrgHeroImageUrl(""));
+    } catch (e) {
+      // TODO handle error
+    }
   };
   return (
     <Grid item xs={12} sm={12} md={12} lg={12} className={classes.orgImgContainer}>
@@ -50,7 +55,7 @@ const OrgImg = ({ classes }) => {
             disableInputTab={Boolean(url)}
             outputImageType="url"
           />
-          {url ? <Reset onReset={() => handleResetImage()} disabled={foundInBlockchain} /> : null}
+          {url ? <Reset onReset={handleResetImage} disabled={foundInBlockchain} /> : null}
         </Grid>
         <Grid item xs={12} sm={6} md={6} lg={6} className={classes.previewContainer}>
           <Typography className={classes.previewText}>

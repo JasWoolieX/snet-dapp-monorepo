@@ -19,6 +19,7 @@ import { clientTypes } from "shared/dist/utils/clientTypes";
 import { GlobalRoutes } from "../../../GlobalRouter/Routes";
 import { defaultContacts } from "../reducers/organizationReducer";
 import RegistryContract from "../../../Utils/PlatformContracts/RegistryContract";
+import { assetTypes } from "../../../Utils/FileUpload";
 
 export const SET_ALL_ORG_ATTRIBUTES = "SET_ALL_ORG_ATTRIBUTES";
 export const SET_ONE_BASIC_DETAIL = "SET_ONE_BASIC_DETAIL";
@@ -107,6 +108,7 @@ export const validateOrgId = orgId => async dispatch => {
     throw error;
   }
 };
+
 const uploadFileAPI = (assetType, fileBlob, orgUuid) => async dispatch => {
   const { token } = await dispatch(fetchAuthenticatedUser());
   let url = `${APIEndpoints.UTILITY.endpoint}${APIPaths.UPLOAD_FILE}?type=${assetType}&org_uuid=${orgUuid}`;
@@ -118,6 +120,30 @@ export const uploadFile = (assetType, fileBlob, orgUuid) => async dispatch => {
   try {
     dispatch(loaderActions.startAppLoader(LoaderContent.UPLOAD_FILE));
     const { data, error } = await dispatch(uploadFileAPI(assetType, fileBlob, orgUuid));
+    if (error.code) {
+      throw new APIError(error.message);
+    }
+    dispatch(loaderActions.stopAppLoader());
+    return data;
+  } catch (error) {
+    dispatch(loaderActions.stopAppLoader());
+    throw error;
+  }
+};
+
+const deleteOrgImageAPI = orgUuid => async dispatch => {
+  const { token } = await dispatch(fetchAuthenticatedUser());
+  const apiName = APIEndpoints.REGISTRY.name;
+  const apiPath = APIPaths.DELETE_FILE;
+  const queryParameters = { type: assetTypes.ORG_ASSETS, org_uuid: orgUuid };
+  const apiOptions = initializeAPIOptions(token, null, queryParameters);
+  return API.post(apiName, apiPath, apiOptions);
+};
+
+export const deleteOrgImage = orgUuid => async dispatch => {
+  try {
+    dispatch(loaderActions.startAppLoader(LoaderContent.UPLOAD_FILE));
+    const { data, error } = await dispatch(deleteOrgImageAPI(orgUuid));
     if (error.code) {
       throw new APIError(error.message);
     }

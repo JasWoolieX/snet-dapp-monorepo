@@ -49,6 +49,7 @@ export const APIPaths = {
   SAVE_SERVICE_TRANSACTION: (orgUuid, serviceUuid) => `/org/${orgUuid}/service/${serviceUuid}/transaction`,
   FREE_CALL_SIGNER_ADDRESS: "/freecall/signer_address",
   UPLOAD_FILE: "/upload",
+  DELETE_FILE: "/file/delete",
   USER_VERIFICATION_INITIATE: "/initiate",
   USER_VERIFICATION_STATUS: "/status",
   SAMPLE_DAEMON_CONFIG: (orgUuid, serviceuuid) => `/org/${orgUuid}/service/${serviceuuid}/group/groupId/daemon/config`,
