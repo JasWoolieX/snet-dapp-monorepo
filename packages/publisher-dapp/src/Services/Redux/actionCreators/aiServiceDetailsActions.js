@@ -513,6 +513,30 @@ export const uploadFile = (assetType, fileBlob, orgUuid, serviceUuid) => async d
   }
 };
 
+const deleteFileAPI = (assetType, orgUuid, serviceUuid) => async dispatch => {
+  const { token } = await dispatch(fetchAuthenticatedUser());
+  const apiName = APIEndpoints.REGISTRY.name;
+  const apiPath = APIPaths.DELETE_FILE;
+  const queryParameters = { type: assetType, org_uuid: orgUuid, service_uuid: serviceUuid };
+  const apiOptions = initializeAPIOptions(token, null, queryParameters);
+  return API.post(apiName, apiPath, apiOptions);
+};
+
+export const deleteFile = (assetType, orgUuid, serviceUuid) => async dispatch => {
+  try {
+    dispatch(loaderActions.startAppLoader(LoaderContent.DELETE_FILE));
+    const { data, error } = await dispatch(deleteFileAPI(assetType, orgUuid, serviceUuid));
+    if (error.code) {
+      throw new APIError(error.message);
+    }
+    dispatch(loaderActions.stopAppLoader());
+    return data;
+  } catch (error) {
+    dispatch(loaderActions.stopAppLoader());
+    throw error;
+  }
+};
+
 const updateInBlockchain = (organization, serviceDetails, serviceMetadataURI, history) => async dispatch => {
   const sdk = await initSDK();
   return new Promise((resolve, reject) => {

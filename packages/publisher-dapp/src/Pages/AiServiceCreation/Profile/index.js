@@ -43,7 +43,7 @@ const Profile = ({ classes, serviceDetails, changeServiceDetailsLeaf, changeHero
   const history = useHistory();
   const { orgUuid } = useParams();
   const { isValidateServiceIdLoading } = useSelector(selectState);
-
+  const [imgUploadAlert, setImgUploadAlert] = useState({});
   const [tags, setTags] = useState(""); // Only to render in the chip comp
 
   const [alert, setAlert] = useState({});
@@ -158,16 +158,33 @@ const Profile = ({ classes, serviceDetails, changeServiceDetailsLeaf, changeHero
     changeServiceDetailsLeaf("tags", localItems);
   };
 
-  const handleResetImage = () => {
-    changeHeroImage("");
+  const handleResetImage = async () => {
+    try {
+      setImgUploadAlert({});
+      await dispatch(aiServiceDetailsActions.deleteFile(assetTypes.SERVICE_ASSETS, orgUuid, serviceDetails.uuid));
+      changeHeroImage("");
+    } catch (e) {
+      if (checkIfKnownError(e)) {
+        return setImgUploadAlert({ type: alertTypes.ERROR, message: e.message });
+      }
+      return setImgUploadAlert({ type: alertTypes.ERROR, message: "Unable to delete image. Please try later" });
+    }
   };
+
   const handleImageChange = async (data, mimeType, _encoding, filename) => {
-    const arrayBuffer = base64ToArrayBuffer(data);
-    const fileBlob = new File([arrayBuffer], filename, { type: mimeType });
-    const { url } = await dispatch(
-      aiServiceDetailsActions.uploadFile(assetTypes.SERVICE_ASSETS, fileBlob, orgUuid, serviceDetails.uuid)
-    );
-    changeHeroImage(url);
+    try {
+      const arrayBuffer = base64ToArrayBuffer(data);
+      const fileBlob = new File([arrayBuffer], filename, { type: mimeType });
+      const { url } = await dispatch(
+        aiServiceDetailsActions.uploadFile(assetTypes.SERVICE_ASSETS, fileBlob, orgUuid, serviceDetails.uuid)
+      );
+      changeHeroImage(url);
+    } catch (e) {
+      if (checkIfKnownError(e)) {
+        return setImgUploadAlert({ type: alertTypes.ERROR, message: e.message });
+      }
+      return setImgUploadAlert({ type: alertTypes.ERROR, message: "Unable to upload image. Please try later" });
+    }
   };
 
   const handleFinishLater = async () => {
@@ -322,11 +339,10 @@ const Profile = ({ classes, serviceDetails, changeServiceDetailsLeaf, changeHero
                   outputImageType="url"
                   disableResetButton={false}
                   disableDownloadButton={true}
-                  // returnByteArray
                 />
               </div>
               {serviceDetails.assets.heroImage.url ? (
-                <SNETButton children="reset" onClick={() => handleResetImage()} color="secondary" variant="text" />
+                <SNETButton children="reset" onClick={handleResetImage} color="secondary" variant="text" />
               ) : null}
               <div className={classes.profileImgContent}>
                 <Typography variant="subtitle2">
@@ -349,6 +365,7 @@ const Profile = ({ classes, serviceDetails, changeServiceDetailsLeaf, changeHero
                 <Typography className={classes.imgDimensionDetails}>207 x 115 | 32-bit PNG or JPG </Typography>
               </div>
             </div>
+            <AlertBox type={imgUploadAlert.type} message={imgUploadAlert.message} />
           </div>
           <div className={classes.alertContainer}>
             <AlertBox type={alert.type} message={alert.message} children={alert.children} />
