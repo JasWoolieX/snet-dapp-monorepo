@@ -49,6 +49,10 @@ const OrgImg = ({ classes }) => {
       await dispatch(organizationActions.deleteOrgImage(orgUuid));
       dispatch(organizationActions.setOrgHeroImageUrl(""));
     } catch (e) {
+      if (checkIfKnownError(e)) {
+        return setImgUploadAlert({ type: alertTypes.ERROR, message: e.message });
+      }
+      return setImgUploadAlert({ type: alertTypes.ERROR, message: "Unable to delete image. Please try later" });
       // TODO handle error
     }
   };

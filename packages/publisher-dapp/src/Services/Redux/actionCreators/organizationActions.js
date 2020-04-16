@@ -142,7 +142,7 @@ const deleteOrgImageAPI = orgUuid => async dispatch => {
 
 export const deleteOrgImage = orgUuid => async dispatch => {
   try {
-    dispatch(loaderActions.startAppLoader(LoaderContent.UPLOAD_FILE));
+    dispatch(loaderActions.startAppLoader(LoaderContent.DELETE_FILE));
     const { data, error } = await dispatch(deleteOrgImageAPI(orgUuid));
     if (error.code) {
       throw new APIError(error.message);
