@@ -24,7 +24,8 @@ var FileStats = function FileStats(props) {
       show = props.show,
       fileName = props.fileName,
       fileSize = props.fileSize,
-      fileDownloadURL = props.fileDownloadURL;
+      fileDownloadURL = props.fileDownloadURL,
+      onDeleteFiles = props.onDeleteFiles;
   var classes = (0, _styles.useStyles)();
 
   if (!show) {
@@ -76,7 +77,8 @@ var FileStats = function FileStats(props) {
     children: "delete files",
     color: "red",
     variant: "text",
-    disabled: !uploadSuccess
+    disabled: !uploadSuccess,
+    onClick: onDeleteFiles
   }))));
 };
 
@@ -85,7 +87,8 @@ FileStats.prototypes = {
   uploadSuccess: _propTypes.default.func,
   fileName: _propTypes.default.func,
   fileSize: _propTypes.default.number,
-  fileDownloadURL: _propTypes.default.string
+  fileDownloadURL: _propTypes.default.string,
+  onDeleteFiles: _propTypes.default.func
 };
 var _default = FileStats;
 exports.default = _default;

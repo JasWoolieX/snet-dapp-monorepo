@@ -79,6 +79,20 @@ const UploadProto = ({ changeProtoFiles }) => {
 
   const acceptedFileTypes = ["application/zip", "application/x-zip-compressed"];
 
+  const handleFileDelete = async () => {
+    try {
+      setAlert({});
+      await dispatch(aiServiceDetailsActions.deleteFile(assetTypes.SERVICE_PROTO_FILES, orgUuid, serviceUuid));
+      changeProtoFiles("");
+      return setAlert({ type: alertTypes.ERROR, message: "File deleted Successfully" });
+    } catch (e) {
+      if (checkIfKnownError(e)) {
+        return setAlert({ type: alertTypes.ERROR, message: e.message });
+      }
+      return setAlert({ type: alertTypes.ERROR, message: "Unable to delete image. Please try later" });
+    }
+  };
+
   return (
     <Fragment>
       <Typography variant="subtitle1">Upload the Proto files</Typography>
@@ -102,6 +116,7 @@ const UploadProto = ({ changeProtoFiles }) => {
         fileSize={selectedFile.size}
         fileDownloadURL={serviceDetails.assets.protoFiles.url}
         uploadSuccess={Boolean(serviceDetails.assets.protoFiles.url)}
+        onDeleteFiles={handleFileDelete}
       />
       <AlertBox type={alert.type} message={alert.message} />
     </Fragment>

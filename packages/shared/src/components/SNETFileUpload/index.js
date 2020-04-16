@@ -23,6 +23,7 @@ const SNETFileUpload = props => {
     fileSize,
     fileDownloadURL,
     uploadSuccess,
+    onDeleteFiles,
   } = props;
   const classes = useStyles();
 
@@ -55,6 +56,7 @@ const SNETFileUpload = props => {
           fileSize={fileSize}
           fileDownloadURL={fileDownloadURL}
           uploadSuccess={uploadSuccess}
+          onDeleteFiles={onDeleteFiles}
         />
       </Grid>
     </Grid>
@@ -76,6 +78,7 @@ SNETFileUpload.prototypes = {
   fileSize: PropTypes.number,
   fileDownloadURL: PropTypes.string,
   uploadSuccess: PropTypes.bool,
+  onDeleteFiles: PropTypes.func,
 };
 
 export default SNETFileUpload;

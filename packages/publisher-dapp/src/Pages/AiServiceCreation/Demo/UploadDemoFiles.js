@@ -8,6 +8,7 @@ import { assetTypes } from "../../../Utils/FileUpload";
 import { useDispatch } from "react-redux";
 import JSZip from "jszip";
 import ValidationError from "shared/dist/utils/validationError";
+import { checkIfKnownError } from "shared/dist/utils/error";
 
 const UploadDemoFiles = ({ classes, orgUuid, serviceUuid, demoFilesUrl, changeDemoFiles }) => {
   const [alert, setAlert] = useState({});
@@ -58,6 +59,19 @@ const UploadDemoFiles = ({ classes, orgUuid, serviceUuid, demoFilesUrl, changeDe
 
   const acceptedFileTypes = ["application/zip", "application/x-zip-compressed"];
 
+  const handleFileDelete = async () => {
+    try {
+      setAlert({});
+      await dispatch(aiServiceDetailsActions.deleteFile(assetTypes.SERVICE_PAGE_COMPONENTS, orgUuid, serviceUuid));
+      changeDemoFiles("");
+    } catch (e) {
+      if (checkIfKnownError(e)) {
+        return setAlert({ type: alertTypes.ERROR, message: e.message });
+      }
+      return setAlert({ type: alertTypes.ERROR, message: "Unable to delete image. Please try later" });
+    }
+  };
+
   return (
     <div className={classes.stepThreeContainer}>
       <Typography variant="subtitle1" className={classes.stepsHeading}>
@@ -73,6 +87,7 @@ const UploadDemoFiles = ({ classes, orgUuid, serviceUuid, demoFilesUrl, changeDe
         fileSize={selectedFile.size}
         fileDownloadURL={demoFilesUrl}
         uploadSuccess={Boolean(demoFilesUrl)}
+        onDeleteFiles={handleFileDelete}
       />
       <AlertBox type={alert.type} message={alert.message} />
     </div>
